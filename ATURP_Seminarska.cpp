@@ -12,6 +12,7 @@ using namespace std;
 class Puzzle { 
 public:
     array<int, 9> board;
+    array<int, 9> lastBoard;
     int blankSpace;
     int h = 0;
     Puzzle(array<int, 9> input, int blank) {
@@ -37,10 +38,9 @@ public:
                 h++;
             }
         }
-        if (board[8] != 0) {
-            h++;
-        }
         this->h = h + g;
+        cout << this->h;
+        this->drawPuzzle();
     }
 
     bool isFinished() {
@@ -50,24 +50,39 @@ public:
         }
         return true;
     }
+
+    void drawPuzzle() {
+      for (int i = 0; i < 9; i++) {
+        if(i % 3 == 0) {
+          cout << "\n";
+        }
+        cout << board[i] << " ";
+      }
+      cout << "\n";
+    }
+    
 };
+
 
 
 int main() {
     int cases = 0;
     int blankTemp;
     vector<Puzzle> boards;
+    vector<Puzzle> usedBoards;
     vector<Puzzle> options;
     array<int, 9> board;
     ifstream myfile("sample.in");
     if (myfile.is_open())
     {
         myfile >> cases;
+        cout << "Cases: " << cases;
         for(int j = 0; j < cases; j++)
         {
             for (int i = 0; i < 9; i++) 
             {
                 myfile >> board[i];
+
                 if (board[i] == 0)
                     blankTemp = i;
             }
@@ -82,6 +97,8 @@ int main() {
         while (!currentProblem.isFinished()) 
         {
             Puzzle swapped = currentProblem;
+            usedBoards.push_back(currentProblem);
+            
             switch (currentProblem.blankSpace) //v options so vsi možni premiki, glede na prazno mesto pac switch stavek tu
             {
             case 0:                
@@ -191,14 +208,31 @@ int main() {
                 break;
             }
             Puzzle min = Puzzle(1000);
+            Puzzle reserve = Puzzle(1000);
+            bool reserveCheck = false;
             for (int stack = 0; stack < options.size(); stack++) //tu zracunas hevristiko za vsako potezo od vseh moznih pa zberes najmanjso torej najboljso
             {
                 options[stack].heuristic(g);
-                if (options[stack].h < min.h)
+                if (options[stack].h < reserve.h ) {
+                  reserve = options[stack];
+                }
+                if (options[stack].h < min.h && !equal(begin(options[stack].board), end(options[stack].board), begin(usedBoards[usedBoards.size()-1].board))) {
                     min = options[stack];
+                    reserveCheck = true;
+                }
+                
+                
+                cout << "options\n\n";
+                
+            }
+            if(!reserveCheck) {
+              min = reserve;
             }
             options.clear();
+            
             currentProblem = min;
+            currentProblem.drawPuzzle();
+
             g++;
         }
         int srok = 5;
