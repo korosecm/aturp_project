@@ -39,6 +39,9 @@ public:
             }
         }
         this->h = h + g;
+        if(h == 0 && board[8] == 0) {
+
+        }
         cout << this->h;
         this->drawPuzzle();
     }
@@ -73,6 +76,7 @@ int main() {
     vector<Puzzle> options;
     array<int, 9> board;
     ifstream myfile("sample.in");
+    vector<int> results;
     if (myfile.is_open())
     {
         myfile >> cases;
@@ -93,11 +97,13 @@ int main() {
     for (int i = 0; i < cases; i++) //tu gres skozi vse puzzle
     {
         Puzzle currentProblem = boards[i]; // trenutni puzzle
+        usedBoards.push_back(currentProblem);
+        usedBoards.push_back(currentProblem);
         int g = 1;
         while (!currentProblem.isFinished()) 
         {
             Puzzle swapped = currentProblem;
-            usedBoards.push_back(currentProblem);
+            
             
             switch (currentProblem.blankSpace) //v options so vsi možni premiki, glede na prazno mesto pac switch stavek tu
             {
@@ -216,7 +222,7 @@ int main() {
                 if (options[stack].h < reserve.h ) {
                   reserve = options[stack];
                 }
-                if (options[stack].h < min.h && !equal(begin(options[stack].board), end(options[stack].board), begin(usedBoards[usedBoards.size()-1].board))) {
+                if (options[stack].h < min.h && !equal(begin(options[stack].board), end(options[stack].board), begin(usedBoards[usedBoards.size()-2].board))) {
                     min = options[stack];
                     reserveCheck = true;
                 }
@@ -232,10 +238,16 @@ int main() {
             
             currentProblem = min;
             currentProblem.drawPuzzle();
-
+            usedBoards.push_back(currentProblem);
+            if(currentProblem.isFinished()) {
+              cout << "Uspelo je!!!\n";
+              results.push_back(currentProblem.h);
+              break;
+            }
             g++;
         }
         int srok = 5;
+        
     }
     return 0;
 }
