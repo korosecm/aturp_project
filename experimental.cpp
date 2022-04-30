@@ -301,7 +301,7 @@ Puzzle aStar(Puzzle s, int depth) {
 	return s;
 }
 
-int main() {
+int main(int argc, char **argv) {
 	int depth = 1;
 	int cases;
 	string temp;
@@ -310,10 +310,10 @@ int main() {
 
 
 	 srand ( time(NULL) ); 
-   OpenAndFill("sample.in");
+   OpenAndFill(argv[1]);
    auto start = chrono::steady_clock::now();
 
-	 ifstream myfile("sample.in");
+	 ifstream myfile(argv[1]);
 	 vector<string> puzzles;
 	 if (myfile.is_open())
 	 {

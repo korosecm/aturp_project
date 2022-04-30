@@ -204,7 +204,7 @@ void BFS(node* start_state)
     }
 }
 
-int main()
+int main(int argc, char **argv)
 {
 
 
@@ -220,7 +220,7 @@ int main()
     BFS(start_state);*/
     auto start = chrono::steady_clock::now();
 
-    OpenAndFill("drsna_sestavljanka/solvable.in");
+    OpenAndFill(argv[1]);
     
     
     
