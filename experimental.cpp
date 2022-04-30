@@ -3,8 +3,13 @@
 #include <queue>
 #include <unordered_set>
 #include <fstream>
+#include <ctime>
+#include <sstream>
+#include <string>
+#include <chrono>
 
 using namespace std;
+vector <vector<int>> samples;
 
 class Puzzle {
 public:
@@ -110,11 +115,68 @@ priority_queue <Puzzle> openSet;
 unordered_set <string> visited;
 int maxLength, numNodes;
 
+int getInvCount(vector<int> arr)
+{
+    int inv_count = 0;
+    for (int i = 0; i < 9 - 1; i++)
+        for (int j = i + 1; j < 9; j++)
+            if (arr[j] && arr[i] && arr[i] > arr[j])
+                inv_count++;
+    return inv_count;
+}
+
+bool isSolvable(vector<int> puzzle)
+{
+    // Prestejemo inverzije
+    int invCount = getInvCount(puzzle);
+
+    // Ce je sodo stevilo iverzij.
+    return (invCount % 2 == 0);
+}
+
 bool isValid(int i, int j) {
 	if (i >= 0 && j >= 0 && i < 3 && j < 3)
 		return 1;
 	else
 		return 0;
+}
+
+void OpenAndFill(string filename) {
+    ifstream my_file;
+    my_file.open(filename, ios::out);
+    string line;
+    vector<int> temp;
+    vector<int> sample;
+    int numOfSamples;
+    int chng = 0;
+
+    while (getline(my_file, line))
+    {
+ 
+        istringstream str(line);
+        int n;
+        while (str >> n)
+        {
+            temp.push_back(n);
+            
+        }
+
+    }
+    numOfSamples = temp[0];
+    //temp.erase(temp.begin());
+
+    for (size_t i = 0; i < numOfSamples; i++)
+    {
+        for (size_t j = 0; j < 9; j++)
+        {
+            sample.push_back(temp[chng + j + 1]);
+        }
+        chng += 9;
+        samples.push_back(sample);
+        sample.clear();
+        
+    }
+
 }
 
 Puzzle move(Puzzle s, int i1, int j1, int i2, int j2) {
@@ -248,6 +310,8 @@ int main() {
 
 
 	 srand ( time(NULL) ); 
+   OpenAndFill("sample.in");
+   auto start = chrono::steady_clock::now();
 
 	 ifstream myfile("sample.in");
 	 vector<string> puzzles;
@@ -267,13 +331,24 @@ int main() {
 		 }
 	 }
 	 else cout << "Unable to open file" << endl;
-	while (puzzles.size() > 0) { 										
-		Puzzle s(puzzles[0]); 
-		cout << "Start: " << endl;
-		s.display();
-		cout << endl;											
-		aStar(s, depth);											
+	while (puzzles.size() > 0) { 			
+    if (!isSolvable(samples[0])) {		
+      cout << "Not Solved" << endl;
+    }					
+    else {  
+      Puzzle s(puzzles[0]); 
+      cout << "Start: " << endl;
+      s.display();
+      cout << endl;											
+      aStar(s, depth);							
+    }				
 		puzzles.erase(puzzles.begin());
+    samples.erase(samples.begin());
 	}
+  auto end = chrono::steady_clock::now();
+
+  cout << "Elapsed time in milliseconds: "
+  << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+  << " ms" << endl;
 	return 0;
 }
