@@ -358,7 +358,7 @@ int main(int argc, char **argv) {
   GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
   SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
   SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
-  cout << "Physical memory currently used by this procces: " << physMemUsedByMe << endl;
+  cout << "Physical memory currently used by this procces: " << physMemUsedByMe / 1048576 << "MiB" << endl;
 	
   return 0;
 }
