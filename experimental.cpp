@@ -8,6 +8,9 @@
 #include <string>
 #include <chrono>
 
+#include "windows.h"
+#include "psapi.h"
+
 using namespace std;
 vector <vector<int>> samples;
 
@@ -350,5 +353,12 @@ int main(int argc, char **argv) {
   cout << "Elapsed time in milliseconds: "
   << chrono::duration_cast<chrono::milliseconds>(end - start).count()
   << " ms" << endl;
-	return 0;
+
+  PROCESS_MEMORY_COUNTERS_EX pmc;
+  GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+  SIZE_T virtualMemUsedByMe = pmc.PrivateUsage;
+  SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+  cout << "Physical memory currently used by this procces: " << physMemUsedByMe << endl;
+	
+  return 0;
 }
